@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes</title>
+    <style>
+        h3, h4 {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+<h1>Notes</h1>
+<hr>
+<a href="/note/new">Create a new note</a>
+<ul th:each="note: ${notes}">
+    <li>
+        <h3 th:text="${note.heading}">Heading</h3>
+        <h4 th:text="${note.text}">Text</h4>
+        <br>
+        Created at:
+        <u th:text="${note.creationDateTime}">Creation date time</u>
+        , last change at:
+        <u th:text="${note.lastEditDateTime}">Last edit date time</u>
+        <p>
+            <a href="/note/edit">Edit</a>
+            or
+            <a href="/first/hello">Delete</a>
+        </p>
+    </li>
+</ul>
+</body>
+</html>
