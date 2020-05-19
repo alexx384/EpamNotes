@@ -1,5 +1,6 @@
 package org.palenyy.config;
 
+import org.palenyy.NoteStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -48,5 +49,10 @@ public class SpringConfig implements WebMvcConfigurer {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
         registry.viewResolver(resolver);
+    }
+
+    @Bean
+    public NoteStorage noteStorage() {
+        return new NoteStorage();
     }
 }

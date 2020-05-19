@@ -8,7 +8,15 @@ public class Note {
     private final String creationDateTime;
     private final String lastEditDateTime;
 
-    public Note(String heading, String text, LocalDateTime creationDateTime, LocalDateTime lastEditDateTime) {
+    static Note builder(String heading, String text) {
+        if (heading.isEmpty() || text.isEmpty()) {
+            return null;
+        } else {
+            return new Note(heading, text, LocalDateTime.now(), LocalDateTime.now());
+        }
+    }
+
+    private Note(String heading, String text, LocalDateTime creationDateTime, LocalDateTime lastEditDateTime) {
         this.heading = heading;
         this.text = text;
         this.creationDateTime = creationDateTime.toString();
