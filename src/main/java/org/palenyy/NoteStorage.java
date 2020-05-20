@@ -1,23 +1,42 @@
 package org.palenyy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class NoteStorage {
-    private final List<Note> noteList;
+    private static final int IDX_LOWER_BOUND = 1;
+    private int lastValidIdx = IDX_LOWER_BOUND;
+    private final Map<Integer, Note> noteMap;
 
     public NoteStorage() {
-        noteList = new ArrayList<>();
+        noteMap = new LinkedHashMap<>();
+    }
+
+    private void findNextValidIdx() {
+        //noinspection StatementWithEmptyBody
+        while (noteMap.containsKey(++lastValidIdx));
     }
 
     public void addNote(String heading, String text) {
         Note note = Note.builder(heading, text);
         Objects.requireNonNull(note);
-        noteList.add(note);
+        noteMap.put(lastValidIdx, note);
+        findNextValidIdx();
     }
 
-    public List<Note> getNoteList() {
-        return new ArrayList<>(noteList);
+    public void editNote(Integer key, String heading, String text) {
+        Note note = noteMap.get(key);
+        Objects.requireNonNull(note);
+        note.setHeading(heading);
+        note.setText(text);
+        noteMap.put(key, note);
+    }
+
+    public void deleteNote(Integer key) {
+        noteMap.remove(key);
+        lastValidIdx = key;
+    }
+
+    public Set<Map.Entry<Integer, Note>> getNoteMapEntries() {
+        return noteMap.entrySet();
     }
 }

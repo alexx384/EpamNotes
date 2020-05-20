@@ -3,16 +3,17 @@ package org.palenyy;
 import java.time.LocalDateTime;
 
 public class Note {
-    private final String heading;
-    private final String text;
+    private String heading;
+    private String text;
+    private LocalDateTime lastEditDateTime;
     private final String creationDateTime;
-    private final String lastEditDateTime;
 
     static Note builder(String heading, String text) {
         if (heading.isEmpty() || text.isEmpty()) {
             return null;
         } else {
-            return new Note(heading, text, LocalDateTime.now(), LocalDateTime.now());
+            LocalDateTime dateTime = LocalDateTime.now();
+            return new Note(heading, text, dateTime, dateTime);
         }
     }
 
@@ -20,7 +21,7 @@ public class Note {
         this.heading = heading;
         this.text = text;
         this.creationDateTime = creationDateTime.toString();
-        this.lastEditDateTime = lastEditDateTime.toString();
+        this.lastEditDateTime = lastEditDateTime;
     }
 
     public String getHeading() {
@@ -36,6 +37,16 @@ public class Note {
     }
 
     public String getLastEditDateTime() {
-        return lastEditDateTime;
+        return lastEditDateTime.toString();
+    }
+
+    public void setHeading(String heading) {
+        this.heading = heading;
+        lastEditDateTime = LocalDateTime.now();
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        lastEditDateTime = LocalDateTime.now();
     }
 }
