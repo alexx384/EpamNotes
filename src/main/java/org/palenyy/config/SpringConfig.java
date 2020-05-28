@@ -1,6 +1,5 @@
 package org.palenyy.config;
 
-import org.palenyy.NoteStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -57,7 +56,6 @@ public class SpringConfig implements WebMvcConfigurer {
         return builder
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("classpath:db/sql/create_db.sql")
-                .addScript("classpath:db/sql/insert_data.sql")
                 .build();
     }
 
@@ -71,10 +69,5 @@ public class SpringConfig implements WebMvcConfigurer {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
         registry.viewResolver(resolver);
-    }
-
-    @Bean
-    public NoteStorage noteStorage() {
-        return new NoteStorage();
     }
 }

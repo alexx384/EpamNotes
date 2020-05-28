@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Edit note</title>
@@ -9,9 +9,9 @@
 <hr>
 <form method="post">
     <label for="heading">Heading:</label><br>
-    <input type="text" id="heading" name="heading"><br>
+    <input type="text" id="heading" name="heading" th:value="${note.heading}"><br>
     <label for="text">Text:</label><br>
-    <input type="text" id="text" name="text"><br><br>
+    <input type="text" id="text" name="text" th:value="${note.text}"><br><br>
     <input type="submit" value="Submit">
 </form>
 <br>

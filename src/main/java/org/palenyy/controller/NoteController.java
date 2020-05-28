@@ -1,10 +1,7 @@
 package org.palenyy.controller;
 
-import org.palenyy.dto.BookDto;
-import org.palenyy.entity.Book;
-import org.palenyy.NoteStorage;
-import org.palenyy.dao.BookDao;
-import org.palenyy.service.BookService;
+import org.palenyy.dto.NoteDto;
+import org.palenyy.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,35 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/note")
 public class NoteController {
     @Autowired
-    private BookService bookService;
-
-    @Autowired
-    private NoteStorage noteStorage;
-
-    @GetMapping("/h2")
-    @ResponseBody
-    public String h2Database() {
-        StringBuilder builder = new StringBuilder("The books: ");
-        for (BookDto book : bookService.findAll()) {
-            builder.append(book.toString());
-            builder.append('\n');
-        }
-        return builder.toString();
-    }
-
-//    @GetMapping("/h2/{bookName}")
-//    @ResponseBody
-//    public String h2DatabaseSave(@PathVariable("key") String bookName) {
-//        if (bookName.isEmpty()) {
-//            return "Fail";
-//        }
-//        repository.save(new Book(bookName));
-//        return "OK";
-//    }
+    private NoteService noteService;
 
     @GetMapping("/")
     public String root(Model model) {
-        model.addAttribute("notes", noteStorage.getNoteMapEntries());
+        model.addAttribute("notes", noteService.getAll());
         //noinspection SpringMVCViewInspection
         return "note/root";
     }
@@ -55,27 +28,32 @@ public class NoteController {
 
     @PostMapping("/new")
     public String postNewNote(@RequestParam("heading") String heading, @RequestParam("text") String text) {
-        noteStorage.addNote(heading, text);
+        noteService.insert(new NoteDto(heading, text));
         //noinspection SpringMVCViewInspection
         return "note/new";
     }
 
-    @GetMapping("/edit/**")
-    public String getEditNote() {
+    @GetMapping("/edit/{key}")
+    public String getEditNote(@PathVariable("key") long key, Model model) {
+        NoteDto noteDto = noteService.getById(key);
+        if (noteDto == null) {
+            return "note/error";
+        }
+        model.addAttribute("note", noteDto);
         //noinspection SpringMVCViewInspection
         return "note/edit";
     }
 
     @PostMapping("/edit/{key}")
-    public String postEditNote(@PathVariable("key") int key, @RequestParam("heading") String heading,
-                               @RequestParam("text") String text) {
-        noteStorage.editNote(key, heading, text);
-        return "note/edit";
+    public String postEditNote(@PathVariable("key") long key, @RequestParam("heading") String heading,
+                               @RequestParam("text") String text, Model model) {
+        noteService.update(new NoteDto(key, heading, text));
+        return getEditNote(key, model);
     }
 
     @GetMapping("/delete/{key}")
-    public String postDeleteNote(@PathVariable("key") int key, Model model) {
-        noteStorage.deleteNote(key);
+    public String postDeleteNote(@PathVariable("key") long key, Model model) {
+        noteService.deleteById(key);
         return root(model);
     }
 }

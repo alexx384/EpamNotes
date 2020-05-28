@@ -1,4 +1,7 @@
-CREATE TABLE books (
-  id         INTEGER PRIMARY KEY,
-  name VARCHAR(30)
+CREATE TABLE notes (
+	id IDENTITY PRIMARY KEY,
+	heading VARCHAR(30) NOT NULL,
+	text VARCHAR(255) NOT NULL,
+	last_edit TIMESTAMP NOT NULL,
+	creation TIMESTAMP NOT NULL
 );
