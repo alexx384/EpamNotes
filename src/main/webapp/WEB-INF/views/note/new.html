@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Create new note</title>
+    <title th:text="#{new.title}"></title>
 </head>
 <body>
-<h1>Create new note</h1>
+<h1 th:text="#{new.title}"></h1>
 <hr>
 <form method="post">
-    <label for="heading">Heading:</label><br>
+    <label for="heading" th:text="#{new.heading}"></label><br>
     <input type="text" id="heading" name="heading"><br>
-    <label for="text">Text:</label><br>
+    <label for="text" th:text="#{new.text}"></label><br>
     <input type="text" id="text" name="text"><br><br>
     <input type="submit" value="Submit">
 </form>
 <br>
-<a href="/note/">Return to notes</a>
+<a href="/note/" th:text="#{new.back}"></a>
 </body>
 </html>

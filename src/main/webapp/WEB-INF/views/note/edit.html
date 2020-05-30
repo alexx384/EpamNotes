@@ -2,19 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit note</title>
+    <title th:text="#{edit.title}"></title>
 </head>
 <body>
-<h1>Edit note</h1>
+<h1 th:text="#{edit.title}"></h1>
 <hr>
 <form method="post">
-    <label for="heading">Heading:</label><br>
+    <label for="heading" th:text="#{edit.form.heading}"></label><br>
     <input type="text" id="heading" name="heading" th:value="${note.heading}"><br>
-    <label for="text">Text:</label><br>
+    <label for="text" th:text="#{edit.form.text}"></label><br>
     <input type="text" id="text" name="text" th:value="${note.text}"><br><br>
     <input type="submit" value="Submit">
 </form>
 <br>
-<a href="/note/">Return to notes</a>
+<a href="/note/" th:text="#{edit.back}"></a>
 </body>
 </html>
