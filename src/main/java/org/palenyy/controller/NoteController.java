@@ -1,5 +1,9 @@
 package org.palenyy.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.palenyy.dto.NoteDto;
 import org.palenyy.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,15 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/note")
 public class NoteController {
+    private final ObjectMapper objectMapper;
+    private final XmlMapper xmlMapper;
+
+    {
+        objectMapper = new ObjectMapper();
+        xmlMapper = new XmlMapper();
+        xmlMapper.configure( ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true );
+    }
+
     @Autowired
     private NoteService noteService;
 
@@ -66,5 +79,33 @@ public class NoteController {
         model.addAttribute("note", noteDto);
         //noinspection SpringMVCViewInspection
         return "note/view";
+    }
+
+    @ResponseBody
+    @GetMapping("/json/{key}")
+    public String getNoteJsonRepresentation(@PathVariable("key") long key) {
+        NoteDto noteDto = noteService.getById(key);
+        if (noteDto == null) {
+            return "note/error";
+        }
+        try {
+            return objectMapper.writeValueAsString(noteDto);
+        } catch (JsonProcessingException e) {
+            return e.getMessage();
+        }
+    }
+
+    @ResponseBody
+    @GetMapping("/xml/{key}")
+    public String getNoteXmlRepresentation(@PathVariable("key") long key) {
+        NoteDto noteDto = noteService.getById(key);
+        if (noteDto == null) {
+            return "note/error";
+        }
+        try {
+            return xmlMapper.writeValueAsString(noteDto);
+        } catch (JsonProcessingException e) {
+            return e.getMessage();
+        }
     }
 }

@@ -32,6 +32,10 @@
             <a th:href="'/note/delete/' + ${note.id}" th:text="#{root.note.delete}"></a>
             /
             <a th:href="'/note/view/' + ${note.id}" th:text="#{root.note.view}"></a>
+            /
+            <a th:href="'/note/json/' + ${note.id}">Json</a>
+            /
+            <a th:href="'/note/xml/' + ${note.id}">Xml</a>
         </p>
     </li>
 </ul>
