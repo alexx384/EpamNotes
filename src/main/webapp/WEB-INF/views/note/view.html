@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{view.title}"></title>
+</head>
+<body>
+<h1 th:text="#{view.title}"></h1>
+<hr>
+<b th:text="#{view.form.heading} + ':'"></b><br>
+<label th:text="${note.heading}"></label><br>
+<b th:text="#{view.form.text} + ':'"></b><br>
+<label th:text="${note.text}"></label><br><br>
+<br>
+<a href="/note/" th:text="#{view.back}"></a>
+</body>
+</html>

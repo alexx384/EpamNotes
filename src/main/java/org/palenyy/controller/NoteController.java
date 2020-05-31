@@ -56,4 +56,15 @@ public class NoteController {
         noteService.deleteById(key);
         return root(model);
     }
+
+    @GetMapping("/view/{key}")
+    public String getViewNote(@PathVariable("key") long key, Model model) {
+        NoteDto noteDto = noteService.getById(key);
+        if (noteDto == null) {
+            return "note/error";
+        }
+        model.addAttribute("note", noteDto);
+        //noinspection SpringMVCViewInspection
+        return "note/view";
+    }
 }
