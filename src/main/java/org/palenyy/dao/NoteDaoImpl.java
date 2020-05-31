@@ -25,44 +25,43 @@ public class NoteDaoImpl implements NoteDao {
 
     @Override
     public List<Note> getAll() {
-        String sql = "SELECT * FROM " + TABLE_NAME;
+        String sql = String.format("SELECT * FROM %s", TABLE_NAME);
         return jdbcTemplate.query(sql, new NoteRowMapper());
     }
 
     @Override
     public Note getById(Long id) {
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE ID=" + id.toString();
+        String sql = String.format("SELECT * FROM %s WHERE ID=%s", TABLE_NAME, id.toString());
         return jdbcTemplate.queryForObject(sql, new NoteRowMapper());
     }
 
     @Override
     public void update(Note note) {
-        String sql = "UPDATE " + TABLE_NAME + " SET "
-                + ENTITY_HEADING + "='" + note.getHeading() + "', "
-                + ENTITY_TEXT + "='" + note.getText() + "', "
-                + ENTITY_LAST_EDIT + "='" + note.getLastEditDateTime().toString() + "' "
-                + "WHERE " + ENTITY_ID + '=' + note.getId().toString();
+        String sql = String.format("UPDATE %s SET %s='%s', %s='%s', %s='%s' WHERE %s=%s", TABLE_NAME,
+                ENTITY_HEADING, note.getHeading(),
+                ENTITY_TEXT, note.getText(),
+                ENTITY_LAST_EDIT, note.getLastEditDateTime().toString(),
+                ENTITY_ID, note.getId().toString());
         jdbcTemplate.update(sql);
     }
 
     @Override
     public boolean deleteById(Long id) {
-        String sql = "DELETE FROM " + TABLE_NAME + " WHERE ID=" + id.toString();
+        String sql = String.format("DELETE FROM %s WHERE ID=%s", TABLE_NAME, id.toString());
         return jdbcTemplate.update(sql) == 1;
     }
 
     @Override
     public boolean insert(Note note) {
-        String sql = "INSERT INTO " + TABLE_NAME + '('
-                + ENTITY_HEADING + ','
-                + ENTITY_TEXT + ','
-                + ENTITY_LAST_EDIT + ','
-                + ENTITY_CREATION + ')'
-                + " VALUES("
-                + '\'' + note.getHeading() + "', "
-                + '\'' + note.getText() + "', "
-                + '\'' + note.getLastEditDateTime().toString() + "', "
-                + '\'' + note.getCreationDateTime().toString() + "')";
+        String sql = String.format("INSERT INTO %s(%s,%s,%s,%s) VALUES('%s', '%s', '%s', '%s')", TABLE_NAME,
+                ENTITY_HEADING,
+                ENTITY_TEXT,
+                ENTITY_LAST_EDIT,
+                ENTITY_CREATION,
+                note.getHeading(),
+                note.getText(),
+                note.getLastEditDateTime().toString(),
+                note.getCreationDateTime().toString());
         return jdbcTemplate.update(sql) == 1;
     }
 
