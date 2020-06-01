@@ -1,9 +1,5 @@
 package org.palenyy.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.palenyy.dto.NoteDto;
 import org.palenyy.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,44 +8,36 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
+@SuppressWarnings("SpringMVCViewInspection")
 @Controller
 @RequestMapping("/note")
 public class NoteController {
-    private final ObjectMapper objectMapper;
-    private final XmlMapper xmlMapper;
     private final NoteService noteService;
 
     public NoteController(@Autowired NoteService noteService) {
         this.noteService = noteService;
-        objectMapper = new ObjectMapper();
-        xmlMapper = new XmlMapper();
-        xmlMapper.configure( ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true );
     }
 
     @GetMapping("/")
     public String root(Model model) {
         model.addAttribute("notes", noteService.getAll());
-        //noinspection SpringMVCViewInspection
         return "note/root";
     }
 
     @GetMapping("/new")
     public String getNewNote() {
-        //noinspection SpringMVCViewInspection
         return "note/new";
     }
 
     @PostMapping("/new")
     public String postNewNote(@RequestParam("heading") String heading, @RequestParam("text") String text) {
-        noteService.insert(new NoteDto(heading, text));
-        //noinspection SpringMVCViewInspection
-        return "note/new";
+        if (noteService.insert(new NoteDto(heading, text))) {
+            return "note/new";
+        } else {
+            return "note/error";
+        }
     }
 
     @GetMapping("/edit/{key}")
@@ -59,7 +47,6 @@ public class NoteController {
             return "note/error";
         }
         model.addAttribute("note", noteDto);
-        //noinspection SpringMVCViewInspection
         return "note/edit";
     }
 
@@ -72,8 +59,11 @@ public class NoteController {
 
     @GetMapping("/delete/{key}")
     public String postDeleteNote(@PathVariable("key") long key, Model model) {
-        noteService.deleteById(key);
-        return root(model);
+        if (noteService.deleteById(key)) {
+            return root(model);
+        } else {
+            return "note/error";
+        }
     }
 
     @GetMapping("/view/{key}")
@@ -83,47 +73,52 @@ public class NoteController {
             return "note/error";
         }
         model.addAttribute("note", noteDto);
-        //noinspection SpringMVCViewInspection
         return "note/view";
     }
 
     @ResponseBody
     @GetMapping("/json/{key}")
     public String getNoteJsonRepresentation(@PathVariable("key") long key) {
-        NoteDto noteDto = noteService.getById(key);
-        if (noteDto == null) {
-            return "note/error";
-        }
-        try {
-            return objectMapper.writeValueAsString(noteDto);
-        } catch (JsonProcessingException e) {
-            return e.getMessage();
-        }
+        return noteService.getJsonStrById(key);
     }
 
     @ResponseBody
     @GetMapping("/xml/{key}")
     public String getNoteXmlRepresentation(@PathVariable("key") long key) {
-        NoteDto noteDto = noteService.getById(key);
-        if (noteDto == null) {
-            return "note/error";
-        }
-        try {
-            return xmlMapper.writeValueAsString(noteDto);
-        } catch (JsonProcessingException e) {
-            return e.getMessage();
-        }
+        return noteService.getXmlStrById(key);
     }
 
     @PostMapping("/upload/json")
-    public String uploadJsonNote(@RequestParam("jsonNote") MultipartFile file) {
-        System.out.println(file.getName());
-        try  {
-            byte[] content = file.getBytes();
-            System.out.println(new String(content));
+    public String insertNoteJson(@RequestParam("jsonNote") MultipartFile fileJsonNote, Model model) {
+        String strJsonNote;
+        try {
+            byte[] contentJsonNote = fileJsonNote.getBytes();
+            strJsonNote = new String(contentJsonNote);
         } catch (IOException e) {
             e.printStackTrace();
+            return "note/error";
         }
-        return "note/root";
+        if (noteService.insertNoteSerializedJson(strJsonNote)) {
+            return root(model);
+        } else {
+            return "note/error";
+        }
+    }
+
+    @PostMapping("/upload/xml")
+    public String insertNoteXml(@RequestParam("xmlNote") MultipartFile fileXmlNote, Model model) {
+        String strXmlNote;
+        try {
+            byte[] contentXmlNote = fileXmlNote.getBytes();
+            strXmlNote = new String(contentXmlNote);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "note/error";
+        }
+        if (noteService.insertNoteSerializedXml(strXmlNote)) {
+            return root(model);
+        } else {
+            return "note/error";
+        }
     }
 }

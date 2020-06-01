@@ -1,5 +1,7 @@
 package org.palenyy.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDateTime;
 
 public class NoteDto {
@@ -19,7 +21,11 @@ public class NoteDto {
         this(id, heading, text, null, null);
     }
 
-    public NoteDto(Long id, String heading, String text, LocalDateTime creationDateTime, LocalDateTime lastEditDateTime) {
+    public NoteDto(@JsonProperty("id") Long id,
+                   @JsonProperty("heading") String heading,
+                   @JsonProperty("text") String text,
+                   @JsonProperty("creationDateTime") LocalDateTime creationDateTime,
+                   @JsonProperty("lastEditDateTime") LocalDateTime lastEditDateTime) {
         this.id = id;
         this.heading = heading;
         this.text = text;

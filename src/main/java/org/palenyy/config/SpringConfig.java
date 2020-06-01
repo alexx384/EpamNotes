@@ -1,7 +1,9 @@
 package org.palenyy.config;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -29,6 +31,14 @@ public class SpringConfig implements WebMvcConfigurer {
         multi.setMaxUploadSize(100000);
 
         return multi;
+    }
+
+    // TODO: determine if it is required
+    @Bean
+    @Primary
+    public Jackson2ObjectMapperBuilder objectMapperBuilder() {
+        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
+        return builder.modulesToInstall(new JavaTimeModule());
     }
 
     @Override

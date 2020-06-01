@@ -21,6 +21,11 @@
     <input type="file" id="jsonNoteId" name="jsonNote"><br><br>
     <input type="submit">
 </form>
+<form method="post" action="/note/upload/xml" enctype="multipart/form-data">
+    <label for="xmlNoteId">Select xml note:</label>
+    <input type="file" id="xmlNoteId" name="xmlNote"><br><br>
+    <input type="submit">
+</form>
 <a href="/note/new" th:text="#{root.createNewNote}"></a>
 <ul th:each="note: ${notes}">
     <li>
