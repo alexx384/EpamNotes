@@ -1,10 +1,8 @@
 package org.palenyy.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Description;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -23,6 +21,14 @@ public class SpringConfig implements WebMvcConfigurer {
     public SpringConfig(ThymeleafConfig thymeleafConfig, LocaleConfig localeConfig) {
         this.thymeleafConfig = thymeleafConfig;
         this.localeConfig = localeConfig;
+    }
+
+    @Bean(name="multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multi = new CommonsMultipartResolver();
+        multi.setMaxUploadSize(100000);
+
+        return multi;
     }
 
     @Override

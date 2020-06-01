@@ -10,21 +10,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Controller
 @RequestMapping("/note")
 public class NoteController {
     private final ObjectMapper objectMapper;
     private final XmlMapper xmlMapper;
+    private final NoteService noteService;
 
-    {
+    public NoteController(@Autowired NoteService noteService) {
+        this.noteService = noteService;
         objectMapper = new ObjectMapper();
         xmlMapper = new XmlMapper();
         xmlMapper.configure( ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true );
     }
-
-    @Autowired
-    private NoteService noteService;
 
     @GetMapping("/")
     public String root(Model model) {
@@ -107,5 +113,17 @@ public class NoteController {
         } catch (JsonProcessingException e) {
             return e.getMessage();
         }
+    }
+
+    @PostMapping("/upload/json")
+    public String uploadJsonNote(@RequestParam("jsonNote") MultipartFile file) {
+        System.out.println(file.getName());
+        try  {
+            byte[] content = file.getBytes();
+            System.out.println(new String(content));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "note/root";
     }
 }

@@ -16,6 +16,11 @@
 <a href="/note/?lang=en" th:text="#{lang.eng}"></a>
 <a href="/note/?lang=ru" th:text="#{lang.ru}"></a>
 <hr>
+<form method="post" action="/note/upload/json" enctype="multipart/form-data">
+    <label for="jsonNoteId">Select json note:</label>
+    <input type="file" id="jsonNoteId" name="jsonNote"><br><br>
+    <input type="submit">
+</form>
 <a href="/note/new" th:text="#{root.createNewNote}"></a>
 <ul th:each="note: ${notes}">
     <li>
