@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class Note {
     private static final Long UNKNOWN_ID = -1L;
+    private static final String NONE_TIME = "None time";
 
     private final Long id;
     private final String heading;

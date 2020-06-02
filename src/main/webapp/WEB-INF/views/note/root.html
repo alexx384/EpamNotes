@@ -17,37 +17,38 @@
 <a href="/note/?lang=ru" th:text="#{lang.ru}"></a>
 <hr>
 <form method="post" action="/note/upload/json" enctype="multipart/form-data">
-    <label for="jsonNoteId">Select json note:</label>
-    <input type="file" id="jsonNoteId" name="jsonNote"><br><br>
-    <input type="submit">
+    <label for="jsonNoteId" th:text="#{root.selectJson} + ':'"></label>
+    <input type="file" id="jsonNoteId" name="jsonNote" required><br><br>
+    <input type="submit" th:value="#{note.submit}">
 </form>
 <form method="post" action="/note/upload/xml" enctype="multipart/form-data">
-    <label for="xmlNoteId">Select xml note:</label>
-    <input type="file" id="xmlNoteId" name="xmlNote"><br><br>
-    <input type="submit">
+    <label for="xmlNoteId" th:text="#{root.selectXml} + ':'"></label>
+    <input type="file" id="xmlNoteId" name="xmlNote" required><br><br>
+    <input type="submit" th:value="#{note.submit}">
 </form>
+<br>
 <a href="/note/new" th:text="#{root.createNewNote}"></a>
 <ul th:each="note: ${notes}">
     <li>
         <h3 th:text="${note.heading} + ': '"></h3>
         <h4 th:text="${note.text}"></h4>
         <br>
-        <b th:text="#{root.createdAt} + ':'"></b>
-        <u th:text="${note.creationDateTime}"></u>
-        <b th:text="', ' + #{root.lastChangeAt} + ':'"></b>
-        <u th:text="${note.lastEditDateTime}"></u>
+        <b th:text="#{note.createdAt} + ':'"></b>
+        <u th:text="${#temporals.format(note.creationDateTime, 'yyyy-MMM-dd HH:mm:ss.SSSSSS')}"></u>
+        <b th:text="', ' + #{note.lastChangeAt} + ':'"></b>
+        <u th:text="${#temporals.format(note.lastEditDateTime, 'yyyy-MMM-dd HH:mm:ss.SSSSSS')}"></u>
         <p>
             <a th:href="'/note/edit/' + ${note.id}" th:text="#{root.note.edit}"></a>
             /
-            <a th:href="'/note/delete/' + ${note.id}" th:text="#{root.note.delete}"></a>
-            /
             <a th:href="'/note/view/' + ${note.id}" th:text="#{root.note.view}"></a>
+            /
+            <a th:href="'/note/history/' + ${note.id}" th:text="#{root.note.history}"></a>
             /
             <a th:href="'/note/json/' + ${note.id}">Json</a>
             /
             <a th:href="'/note/xml/' + ${note.id}">Xml</a>
             /
-            <a th:href="'/note/history/' + ${note.id}">History</a>
+            <a th:href="'/note/delete/' + ${note.id}" th:text="#{root.note.delete}"></a>
         </p>
     </li>
 </ul>

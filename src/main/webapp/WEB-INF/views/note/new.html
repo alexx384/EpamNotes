@@ -8,13 +8,13 @@
 <h1 th:text="#{new.title}"></h1>
 <hr>
 <form method="post">
-    <label for="heading" th:text="#{new.heading}"></label><br>
+    <label for="heading" th:text="#{note.form.heading}"></label><br>
     <input type="text" id="heading" name="heading"><br>
-    <label for="text" th:text="#{new.text}"></label><br>
-    <input type="text" id="text" name="text"><br><br>
-    <input type="submit" value="Submit">
+    <label for="text" th:text="#{note.form.text}"></label><br>
+    <textarea id="text" name="text" cols="40" rows="5"></textarea><br><br>
+    <input type="submit" th:value="#{note.submit}">
 </form>
 <br>
-<a href="/note/" th:text="#{new.back}"></a>
+<a href="/note/" th:text="#{back}"></a>
 </body>
 </html>

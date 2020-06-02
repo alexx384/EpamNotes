@@ -34,9 +34,9 @@ public class NoteService {
         // TODO: get rid off unused modules
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         LocalDateTimeDeserializer localDateTimeDeserializer = new LocalDateTimeDeserializer(
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
         LocalDateTimeSerializer localDateTimeSerializer = new LocalDateTimeSerializer(
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS"));
         javaTimeModule.addSerializer(LocalDateTime.class, localDateTimeSerializer);
         javaTimeModule.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
         this.objectMapper = JsonMapper.builder()
@@ -118,12 +118,11 @@ public class NoteService {
     }
 
     public void insert(NoteDto noteDto) {
-        LocalDateTime localDateTime = LocalDateTime.now();
         noteDao.insert(new Note(
                 noteDto.getHeading(),
                 noteDto.getText(),
-                localDateTime,
-                localDateTime
+                noteDto.getLastEditDateTime(),
+                noteDto.getCreationDateTime()
             )
         );
     }

@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public class NoteDaoImpl implements NoteDao {
-    private static final String TABLE_NAME = "notes";
     private static final String ENTITY_ID = "ID";
     private static final String ENTITY_HEADING = "HEADING";
     private static final String ENTITY_TEXT = "TEXT";
@@ -25,24 +24,30 @@ public class NoteDaoImpl implements NoteDao {
 
     @Override
     public List<Note> getAll() {
-        String sql = "SELECT UNIQUE_NOTES.ID, HEADING, TEXT, UNIQUE_NOTES.CREATION AS LAST_EDIT, NOTES.CREATION FROM NOTES, UNIQUE_NOTES WHERE NOTES.ID = UNIQUE_NOTES.LAST_NOTE_ID";
+        String sql = "SELECT UNIQUE_NOTES.ID, HEADING, TEXT, NOTES.CREATION AS LAST_EDIT, UNIQUE_NOTES.CREATION FROM NOTES, UNIQUE_NOTES WHERE NOTES.ID = UNIQUE_NOTES.LAST_NOTE_ID";
         return jdbcTemplate.query(sql, new NoteRowMapper());
     }
 
     @Override
     public List<Note> getHistoryById(Long id) {
-        String sql = String.format("SELECT UNIQUE_ID AS ID, HEADING, TEXT, CREATION AS LAST_EDIT FROM NOTES WHERE UNIQUE_ID = %s ORDER BY ID DESC", id.toString());
-        return jdbcTemplate.query(sql, new NoteRowMapper());
+        String sql = String.format("SELECT HEADING, TEXT, CREATION AS LAST_EDIT FROM NOTES WHERE UNIQUE_ID = %s ORDER BY ID DESC", id.toString());
+        return jdbcTemplate.query(sql, (ResultSet rs, int rowNum) -> new Note(
+                rs.getString(ENTITY_HEADING),
+                rs.getString(ENTITY_TEXT),
+                rs.getTimestamp(ENTITY_LAST_EDIT).toLocalDateTime()
+        ));
     }
 
 
     @Override
     public Note getById(Long id) {
-        String sql = String.format("SELECT UNIQUE_NOTES.ID, HEADING, TEXT, UNIQUE_NOTES.CREATION AS LAST_EDIT, NOTES.CREATION FROM NOTES, UNIQUE_NOTES WHERE UNIQUE_NOTES.ID = %s AND NOTES.ID = UNIQUE_NOTES.LAST_NOTE_ID", id.toString());
+        String sql = String.format("SELECT HEADING, TEXT, NOTES.CREATION AS LAST_EDIT, UNIQUE_NOTES.CREATION FROM NOTES, UNIQUE_NOTES WHERE UNIQUE_NOTES.ID = %s AND NOTES.ID = UNIQUE_NOTES.LAST_NOTE_ID", id.toString());
         return jdbcTemplate.queryForObject(sql, (ResultSet rs, int rowNum) -> new Note(
+                id,
                 rs.getString(ENTITY_HEADING),
                 rs.getString(ENTITY_TEXT),
-                rs.getTimestamp(ENTITY_LAST_EDIT).toLocalDateTime()
+                rs.getTimestamp(ENTITY_LAST_EDIT).toLocalDateTime(),
+                rs.getTimestamp(ENTITY_CREATION).toLocalDateTime()
         ));
     }
 
@@ -52,7 +57,7 @@ public class NoteDaoImpl implements NoteDao {
                 "SET @USER_ID = %s;\n" +
                 "BEGIN TRANSACTION;\n" +
                 "INSERT INTO NOTES (UNIQUE_ID, HEADING, TEXT, CREATION) VALUES (@USER_ID, '%s', '%s', CURRENT_TIMESTAMP());\n" +
-                "UPDATE UNIQUE_NOTES SET LAST_NOTE_ID = (SELECT SCOPE_IDENTITY()), CREATION = CURRENT_TIMESTAMP() WHERE ID = @USER_ID;\n" +
+                "UPDATE UNIQUE_NOTES SET LAST_NOTE_ID = IDENTITY() WHERE ID = @USER_ID;\n" +
                 "COMMIT;\n" +
                 "SET REFERENTIAL_INTEGRITY TRUE;";
         String sql = String.format(preparedSql, note.getId().toString(), note.getHeading(), note.getText());
@@ -69,14 +74,18 @@ public class NoteDaoImpl implements NoteDao {
     public void insert(Note note) {
         String sql = "SET REFERENTIAL_INTEGRITY FALSE;\n" +
                 "BEGIN TRANSACTION;\n" +
-                "INSERT INTO UNIQUE_NOTES (LAST_NOTE_ID, CREATION) VALUES (1, CURRENT_TIMESTAMP());\n" +
-                "SET @UNIQUE_NOTE_ID = SELECT SCOPE_IDENTITY();\n" +
-                "INSERT INTO NOTES (UNIQUE_ID, HEADING, TEXT, CREATION) VALUES (@UNIQUE_NOTE_ID, '%s', '%s', CURRENT_TIMESTAMP());\n" +
-                "SET @NOTE_ID = SELECT SCOPE_IDENTITY();\n" +
+                "INSERT INTO UNIQUE_NOTES (LAST_NOTE_ID, CREATION) VALUES (1, '%s');\n" +
+                "SET @UNIQUE_NOTE_ID = IDENTITY();\n" +
+                "INSERT INTO NOTES (UNIQUE_ID, HEADING, TEXT, CREATION) VALUES (@UNIQUE_NOTE_ID, '%s', '%s', '%s');\n" +
+                "SET @NOTE_ID = IDENTITY();\n" +
                 "UPDATE UNIQUE_NOTES SET LAST_NOTE_ID = @NOTE_ID WHERE ID = @UNIQUE_NOTE_ID;\n" +
                 "COMMIT;\n" +
                 "SET REFERENTIAL_INTEGRITY TRUE;";
-        sql = String.format(sql, note.getHeading(), note.getText());
+        sql = String.format(sql,
+                note.getCreationDateTime().toString(),
+                note.getHeading(),
+                note.getText(),
+                note.getLastEditDateTime().toString());
         jdbcTemplate.update(sql);
     }
 

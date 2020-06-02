@@ -2,7 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:text="#{history.title}"></title>
+    <style>
+        h3, h4 {
+            display: inline;
+        }
+    </style>
 </head>
 <body>
 <ul th:each="note: ${notes}">
@@ -10,11 +15,11 @@
         <h3 th:text="${note.heading} + ': '"></h3>
         <h4 th:text="${note.text}"></h4>
         <br>
-        <b th:text="#{root.lastChangeAt} + ':'"></b>
-        <u th:text="${note.lastEditDateTime}"></u>
+        <b th:text="#{note.lastChangeAt} + ':'"></b>
+        <u th:text="${#temporals.format(note.lastEditDateTime, 'yyyy-MMM-dd HH:mm:ss.SSSSSS')}"></u>
     </li>
 </ul>
 <br>
-<a href="/note/" th:text="#{new.back}"></a>
+<a href="/note/" th:text="#{back}"></a>
 </body>
 </html>

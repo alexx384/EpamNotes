@@ -3,6 +3,8 @@ package org.palenyy.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.Temporal;
 
 public class NoteDto {
     private static final Long UNKNOWN_ID = -1L;
@@ -18,14 +20,18 @@ public class NoteDto {
     }
 
     public NoteDto(Long id, String heading, String text) {
-        this(id, heading, text, null, null);
+        this(id, heading, text, LocalDateTime.now());
+    }
+
+    public NoteDto(Long id, String heading, String text, LocalDateTime commonTime) {
+        this(id, heading, text, commonTime, commonTime);
     }
 
     public NoteDto(@JsonProperty("id") Long id,
                    @JsonProperty("heading") String heading,
                    @JsonProperty("text") String text,
-                   @JsonProperty("creationDateTime") LocalDateTime creationDateTime,
-                   @JsonProperty("lastEditDateTime") LocalDateTime lastEditDateTime) {
+                   @JsonProperty("lastEditDateTime") LocalDateTime lastEditDateTime,
+                   @JsonProperty("creationDateTime") LocalDateTime creationDateTime) {
         this.id = id;
         this.heading = heading;
         this.text = text;

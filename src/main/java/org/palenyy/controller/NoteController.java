@@ -8,15 +8,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
-/*
-TODO:
-    1. Set download serialization data
-    2. Make right order in history
-    3. Fix formatting in history
-    4. Check internalization
- */
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 
 @SuppressWarnings("SpringMVCViewInspection")
 @Controller
@@ -83,14 +78,24 @@ public class NoteController {
 
     @ResponseBody
     @GetMapping("/json/{key}")
-    public String getNoteJsonRepresentation(@PathVariable("key") long key) {
-        return noteService.getJsonStrById(key);
+    public void getNoteJsonRepresentation(@PathVariable("key") long key, HttpServletResponse response) {
+        response.setContentType("application/json");
+        try (Writer writer = new OutputStreamWriter(response.getOutputStream())) {
+            writer.write(noteService.getJsonStrById(key));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @ResponseBody
     @GetMapping("/xml/{key}")
-    public String getNoteXmlRepresentation(@PathVariable("key") long key) {
-        return noteService.getXmlStrById(key);
+    public void getNoteXmlRepresentation(@PathVariable("key") long key, HttpServletResponse response) {
+        response.setContentType("application/xml");
+        try (Writer writer = new OutputStreamWriter(response.getOutputStream())) {
+            writer.write(noteService.getXmlStrById(key));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @PostMapping("/upload/json")
