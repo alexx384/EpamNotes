@@ -1,7 +1,14 @@
+CREATE TABLE unique_notes (
+	id IDENTITY PRIMARY KEY,
+	last_note_id BIGINT NOT NULL,
+	creation TIMESTAMP NOT NULL
+);
+
 CREATE TABLE notes (
 	id IDENTITY PRIMARY KEY,
+	unique_id BIGINT NOT NULL,
 	heading VARCHAR(30) NOT NULL,
 	text VARCHAR(255) NOT NULL,
-	last_edit TIMESTAMP NOT NULL,
-	creation TIMESTAMP NOT NULL
+	creation TIMESTAMP NOT NULL,
+	CONSTRAINT unique_notes_fk FOREIGN KEY (unique_id) REFERENCES unique_notes(id) ON DELETE CASCADE
 );

@@ -11,6 +11,10 @@ public class Note {
     private final LocalDateTime lastEditDateTime;
     private final LocalDateTime creationDateTime;
 
+    public Note(String heading, String text, LocalDateTime lastEditDateTime) {
+        this(UNKNOWN_ID, heading, text, lastEditDateTime, null);
+    }
+
     public Note(String heading, String text, LocalDateTime lastEditDateTime, LocalDateTime creationDateTime) {
         this(UNKNOWN_ID, heading, text, lastEditDateTime, creationDateTime);
     }

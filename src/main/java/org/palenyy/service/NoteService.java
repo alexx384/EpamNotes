@@ -117,9 +117,9 @@ public class NoteService {
         return noteDao.deleteById(id);
     }
 
-    public boolean insert(NoteDto noteDto) {
+    public void insert(NoteDto noteDto) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        return noteDao.insert(new Note(
+        noteDao.insert(new Note(
                 noteDto.getHeading(),
                 noteDto.getText(),
                 localDateTime,
@@ -136,7 +136,8 @@ public class NoteService {
             e.printStackTrace();
             return false;
         }
-        return insert(noteDto);
+        insert(noteDto);
+        return true;
     }
 
     public boolean insertNoteSerializedXml(String noteJson) {
@@ -147,6 +148,18 @@ public class NoteService {
             e.printStackTrace();
             return false;
         }
-        return insert(noteDto);
+        insert(noteDto);
+        return true;
+    }
+
+    public List<NoteDto> getHistoryById(Long id) {
+        return noteDao.getHistoryById(id).stream()
+                .map(note -> new NoteDto(
+                        note.getId(),
+                        note.getHeading(),
+                        note.getText(),
+                        note.getLastEditDateTime(),
+                        note.getCreationDateTime()))
+                .collect(Collectors.toList());
     }
 }

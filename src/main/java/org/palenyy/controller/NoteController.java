@@ -10,6 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+/*
+TODO:
+    1. Set download serialization data
+    2. Make right order in history
+    3. Fix formatting in history
+    4. Check internalization
+ */
+
 @SuppressWarnings("SpringMVCViewInspection")
 @Controller
 @RequestMapping("/note")
@@ -33,11 +41,8 @@ public class NoteController {
 
     @PostMapping("/new")
     public String postNewNote(@RequestParam("heading") String heading, @RequestParam("text") String text) {
-        if (noteService.insert(new NoteDto(heading, text))) {
-            return "note/new";
-        } else {
-            return "note/error";
-        }
+        noteService.insert(new NoteDto(heading, text));
+        return "note/new";
     }
 
     @GetMapping("/edit/{key}")
@@ -120,5 +125,11 @@ public class NoteController {
         } else {
             return "note/error";
         }
+    }
+
+    @GetMapping("/history/{key}")
+    public String getHistoryById(@PathVariable("key") long key, Model model) {
+        model.addAttribute("notes", noteService.getHistoryById(key));
+        return "note/history";
     }
 }

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<ul th:each="note: ${notes}">
+    <li>
+        <h3 th:text="${note.heading} + ': '"></h3>
+        <h4 th:text="${note.text}"></h4>
+        <br>
+        <b th:text="#{root.lastChangeAt} + ':'"></b>
+        <u th:text="${note.lastEditDateTime}"></u>
+    </li>
+</ul>
+<br>
+<a href="/note/" th:text="#{new.back}"></a>
+</body>
+</html>
