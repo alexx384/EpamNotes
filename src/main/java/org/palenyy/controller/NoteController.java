@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
+// TODO: Think about character encoding at https://stackoverflow.com/questions/33941751/html-form-does-not-send-utf-8-format-inputs?lq=1
 @SuppressWarnings("SpringMVCViewInspection")
 @Controller
 @RequestMapping("/note")
@@ -34,9 +36,11 @@ public class NoteController {
         return "note/new";
     }
 
-    @PostMapping("/new")
+    @PostMapping(value = "/new")
     public String postNewNote(@RequestParam("heading") String heading, @RequestParam("text") String text) {
-        noteService.insert(new NoteDto(heading, text));
+        String crutchHeading = new String(heading.getBytes(StandardCharsets.ISO_8859_1));
+        String crutchText = new String(text.getBytes(StandardCharsets.ISO_8859_1));
+        noteService.insert(new NoteDto(crutchHeading, crutchText));
         return "note/new";
     }
 
@@ -53,7 +57,9 @@ public class NoteController {
     @PostMapping("/edit/{key}")
     public String postEditNote(@PathVariable("key") long key, @RequestParam("heading") String heading,
                                @RequestParam("text") String text, Model model) {
-        noteService.update(new NoteDto(key, heading, text));
+        String crutchHeading = new String(heading.getBytes(StandardCharsets.ISO_8859_1));
+        String crutchText = new String(text.getBytes(StandardCharsets.ISO_8859_1));
+        noteService.update(new NoteDto(key, crutchHeading, crutchText));
         return getEditNote(key, model);
     }
 
